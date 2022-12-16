@@ -18,6 +18,7 @@
     "@types/react-dom": "^18.0.9",
     "axios": "^1.2.1",
     "chakra-ui-autocomplete": "^1.4.5",
+    "chakra-ui-simple-autocomplete": "^2.2.0",
     "framer-motion": "^7.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
