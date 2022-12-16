@@ -34,7 +34,12 @@ export default function Room() {
           <Text as="b" noOfLines={1} fontSize="md">
             마키야 숙박은 고조, 기온, 교토역 근처입니다.
           </Text>
-          <HStack spacing={1}>
+          <HStack
+            _hover={{
+              color: "red.100",
+            }}
+            spacing={1}
+          >
             <FaStar size={15} />
             <Text>5.0</Text>
           </HStack>
