@@ -46,7 +46,7 @@ export default function Header() {
       title: "Login out...",
       description: "Sad to see you go...",
       status: "loading",
-      position: "top-right",
+      position: "bottom-right",
     });
     await logOut();
     queryClient.refetchQueries(["me"]);
