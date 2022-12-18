@@ -16,13 +16,15 @@ import {
   MenuList,
   MenuItem,
   useToast,
+  ToastId,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 import useUser from "../lib/useUser";
 import { logOut } from "../api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 
 export default function Header() {
   const { userLoading, isLoggedIn, user } = useUser();
@@ -41,21 +43,32 @@ export default function Header() {
   const Icon = useColorModeValue(FaMoon, FaSun); // 컴포넌트는 대문자로 시작해야함 !
   const toast = useToast();
   const queryClient = useQueryClient();
+  const toastId = useRef<ToastId>();
+  const mutation = useMutation(logOut, {
+    // 굳이 필요하나? 라는 생각도 드는군 ! 그냥 바로 onSuccess가 있어도 상관없다 !!! 대신에
+    // toastId.current를 해줄 때 onMutate처럼 해주자
+    onMutate: () => {
+      toastId.current = toast({
+        title: "Login out...",
+        description: "Sad to see you go...",
+        status: "loading",
+        position: "bottom-right",
+      });
+    },
+    onSuccess: () => {
+      queryClient.refetchQueries(["me"]);
+      if (toastId.current) {
+        toastId.current = toast({
+          title: "Login out...",
+          description: "Sad to see you go...",
+          status: "loading",
+          position: "bottom-right",
+        });
+      }
+    },
+  });
   const onLogOut = async () => {
-    const toastId = toast({
-      title: "Login out...",
-      description: "Sad to see you go...",
-      status: "loading",
-      position: "bottom-right",
-    });
-    await logOut();
-    queryClient.refetchQueries(["me"]);
-    toast.update(toastId, {
-      status: "success",
-      title: "Done!",
-      description: "See you later!",
-      duration: 5000,
-    });
+    mutation.mutate();
   };
   return (
     <Stack
