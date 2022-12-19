@@ -52,17 +52,17 @@ export default function Header() {
         title: "Login out...",
         description: "Sad to see you go...",
         status: "loading",
+        duration: 10000,
         position: "bottom-right",
       });
     },
     onSuccess: () => {
-      queryClient.refetchQueries(["me"]);
       if (toastId.current) {
-        toastId.current = toast({
-          title: "Login out...",
-          description: "Sad to see you go...",
-          status: "loading",
-          position: "bottom-right",
+        queryClient.refetchQueries(["me"]);
+        toast.update(toastId.current, {
+          status: "success",
+          title: "Done!",
+          description: "See you later!",
         });
       }
     },

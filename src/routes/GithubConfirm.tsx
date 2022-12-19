@@ -3,29 +3,49 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { githubLogIn } from "../api";
 import { useToast } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 
 export default function GithubConfirm() {
   const { search } = useLocation();
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
+  const mutation = useMutation(githubLogIn, {
+    onSuccess: (data) => {
+      toast({
+        status: "success",
+        title: " Welcome!!!",
+        description: "Happy to have you back!!",
+        position: "bottom-right",
+      });
+      reset();
+      queryClient.refetchQueries(["me"]);
+      navigate("/");
+    },
+    onError: (error) => {
+      console.log("error");
+      toast({
+        status: "error",
+        title: "Login fail",
+        description: "Check your Github information",
+        position: "bottom-right",
+      });
+    },
+  });
+
   const confirmLogin = async () => {
     const params = new URLSearchParams(search);
     const code = params.get("code");
     if (code) {
-      const githubLoginStatus = await githubLogIn(code);
-      if (githubLoginStatus === 200) {
-        toast({
-          status: "success",
-          title: " Welcome!!!",
-          description: "Happy to have you back!!",
-          position: "bottom-right",
-        });
-        queryClient.refetchQueries(["me"]);
-        navigate("/");
-      } else {
-      }
+      mutation.mutate(code);
     }
   };
   useEffect(() => {
