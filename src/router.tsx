@@ -5,6 +5,8 @@ import Home from "./routes/Home";
 import KakaoConfirm from "./routes/KakaoConfirm";
 import NotFound from "./routes/NotFound";
 import RoomDetail from "./routes/RoomDetail";
+import UploadPhotos from "./routes/UploadPhotos";
+import UploadRoom from "./routes/UploadRoom";
 
 const router = createBrowserRouter([
   {
@@ -17,8 +19,21 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "rooms/:roomPk",
-        element: <RoomDetail />,
+        path: "rooms",
+        children: [
+          {
+            path: "upload",
+            element: <UploadRoom />,
+          },
+          {
+            path: ":roomPk",
+            element: <RoomDetail />,
+          },
+          {
+            path: ":roomPk/photos",
+            element: <UploadPhotos />,
+          },
+        ],
       },
       {
         path: "social",
