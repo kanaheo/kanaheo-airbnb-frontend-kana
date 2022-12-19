@@ -11,12 +11,7 @@ export default function GithubConfirm() {
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
+  const { reset } = useForm();
 
   const mutation = useMutation(githubLogIn, {
     onSuccess: (data) => {

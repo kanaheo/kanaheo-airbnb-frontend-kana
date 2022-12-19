@@ -3,29 +3,44 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { kakaoLogIn } from "../api";
 import { useToast } from "@chakra-ui/react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 
 export default function KakaoConfirm() {
   const { search } = useLocation();
   const toast = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { reset } = useForm();
+
+  const mutation = useMutation(kakaoLogIn, {
+    onSuccess: (data) => {
+      toast({
+        status: "success",
+        title: " Welcome!!!",
+        description: "Happy to have you back!!",
+        position: "bottom-right",
+      });
+      reset();
+      queryClient.refetchQueries(["me"]);
+      navigate("/");
+    },
+    onError: (error) => {
+      console.log("error");
+      toast({
+        status: "error",
+        title: "Login fail",
+        description: "Check your Kakao information",
+        position: "bottom-right",
+      });
+    },
+  });
+
   const confirmLogin = async () => {
     const params = new URLSearchParams(search);
     const code = params.get("code");
     if (code) {
-      const kakaoLoginStatus = await kakaoLogIn(code);
-      if (kakaoLoginStatus === 200) {
-        toast({
-          status: "success",
-          title: " Welcome!!!",
-          description: "Happy to have you back!!",
-          position: "bottom-right",
-        });
-        queryClient.refetchQueries(["me"]);
-        navigate("/");
-      } else {
-      }
+      mutation.mutate(code);
     }
   };
   useEffect(() => {
