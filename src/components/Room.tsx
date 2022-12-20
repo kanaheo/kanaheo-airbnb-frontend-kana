@@ -38,7 +38,6 @@ export default function Room({
     event.preventDefault();
     navigate(`/rooms/${pk}/photos`);
   };
-  console.log(rating);
   return (
     <Link to={`/rooms/${pk}`}>
       <VStack alignItems={"flex-start"}>
