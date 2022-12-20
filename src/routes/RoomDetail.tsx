@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
-import { getRoom, getRoomReivews } from "../api";
+import { checkBooking, getRoom, getRoomReivews } from "../api";
 import { IReview, IRoomDetail } from "../types";
 import {
   Avatar,
@@ -15,10 +15,12 @@ import {
   Text,
   VStack,
   Container,
+  Button,
 } from "@chakra-ui/react";
 import { FaStar } from "react-icons/fa";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { Helmet } from "react-helmet";
 
 export default function RoomDetail() {
   const { roomPk } = useParams();
@@ -26,8 +28,17 @@ export default function RoomDetail() {
   const { data: reviewsData, isLoading: isReviewsLoading } = useQuery<
     IReview[]
   >(["rooms", roomPk, "reviews"], getRoomReivews);
-  const [dates, setDates] = useState<Date>();
-  console.log(dates);
+  const [dates, setDates] = useState<Date[]>();
+  // 유저가 날짜를 클릭 할 때마다 자동적으로 체크하기 위해서 이걸 쓴다 !
+  const { data: checkBookingData, isLoading: isCheckingBooking } = useQuery(
+    ["check", roomPk, dates],
+    checkBooking,
+    {
+      cacheTime: 0, // 이건 항상 최신 정보를 받아야하니까 !! 왜냐하면 내가 구경하는 사이 누군가 예약을 할지도 !
+      enabled: dates !== undefined,
+    }
+  );
+
   return (
     <Box
       mt={10}
@@ -36,6 +47,9 @@ export default function RoomDetail() {
         lg: 40,
       }}
     >
+      <Helmet>
+        <title>{data ? data.name : "Loadnig..."}</title>
+      </Helmet>
       <Skeleton height={"43px"} width={"25%"} isLoaded={!isLoading}>
         <Heading>{data?.name}</Heading>
         <Box mt={1}>
@@ -152,6 +166,18 @@ export default function RoomDetail() {
             locale="en"
             selectRange
           />
+          <Button
+            disabled={!checkBookingData?.ok}
+            isLoading={isCheckingBooking && dates !== undefined}
+            my={5}
+            w="100%"
+            colorScheme={"red"}
+          >
+            Make booking
+          </Button>
+          {!isCheckingBooking && !checkBookingData?.ok ? (
+            <Text color="red.500">Can't book on those dates, sorry.</Text>
+          ) : null}
         </Box>
       </Grid>
     </Box>
