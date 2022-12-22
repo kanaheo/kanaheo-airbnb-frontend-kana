@@ -8,7 +8,7 @@ const instance = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
       ? "http://127.0.0.1:8000/api/v1/"
-      : "https://kkanakana.onrender.com/api/v1/",
+      : "https://kkanakana-backend.onrender.com/api/v1/",
   withCredentials: true,
 });
 
