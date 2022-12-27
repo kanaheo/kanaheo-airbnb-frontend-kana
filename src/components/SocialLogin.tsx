@@ -9,7 +9,7 @@ export default function SocialLogin() {
   const gbParams = new URLSearchParams(githubParams).toString();
   const kakaoParams = {
     client_id: "015abcad69e4ee8079188d6742057c3f",
-    redirect_uri: "http://127.0.0.1:3000/social/kakao",
+    redirect_uri: "https://kknkkm.site/social/kakao",
     response_type: "code",
   };
   const kParams = new URLSearchParams(kakaoParams).toString();
