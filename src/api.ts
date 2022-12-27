@@ -35,7 +35,7 @@ export const getMe = () => {
 
 export const logOut = () =>
   instance
-    .post(`users/log-out`, null, {
+    .post(`users/log-out/`, null, {
       headers: {
         "X-CSRFToken": Cookie.get("csrftoken") || "",
       },
