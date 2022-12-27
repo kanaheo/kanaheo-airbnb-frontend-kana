@@ -33,15 +33,14 @@ export const getMe = () => {
   return instance.get(`users/me`).then((response) => response.data);
 };
 
-export const logOut = () => {
+export const logOut = () =>
   instance
-    .post(`users/log-out/`, null, {
+    .post(`users/log-out`, null, {
       headers: {
         "X-CSRFToken": Cookie.get("csrftoken") || "",
       },
     })
     .then((response) => response.data);
-};
 
 export const githubLogIn = (code: string) => {
   return instance
