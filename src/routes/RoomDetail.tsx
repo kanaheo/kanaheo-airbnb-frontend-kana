@@ -50,8 +50,19 @@ export default function RoomDetail() {
       <Helmet>
         <title>{data ? data.name : "Loadnig..."}</title>
       </Helmet>
-      <Skeleton height={"43px"} width={"25%"} isLoaded={!isLoading}>
-        <Heading>{data?.name}</Heading>
+      <Skeleton height={"43px"} width={"100%"} isLoaded={!isLoading}>
+        <HStack justifyContent={"space-between"} mt={10}>
+          <VStack alignItems={"flex-start"}>
+            <Skeleton isLoaded={!isLoading} height={"43px"}>
+              <Heading>{data?.name}</Heading>
+            </Skeleton>
+          </VStack>
+          {data?.is_owner ? (
+            <Link to={`/roomModify/${roomPk}`}>
+              <Button>Edit</Button>
+            </Link>
+          ) : null}
+        </HStack>
         <Box mt={1}>
           <HStack>
             <FaStar />
@@ -170,7 +181,7 @@ export default function RoomDetail() {
             disabled={!checkBookingData?.ok}
             isLoading={isCheckingBooking && dates !== undefined}
             my={5}
-            w="100%"
+            w="350px"
             colorScheme={"red"}
           >
             Make booking
