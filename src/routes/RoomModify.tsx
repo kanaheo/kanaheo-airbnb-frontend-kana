@@ -23,10 +23,16 @@ import { Helmet } from "react-helmet";
 import { useForm } from "react-hook-form";
 
 interface IRoomModify {
-  username: string;
-  password: string;
   name: string;
-  email: string;
+  country: string;
+  city: string;
+  price: number;
+  rooms: number;
+  toilets: number;
+  description: string;
+  address: string;
+  pet_friendly: boolean;
+  kind: string;
 }
 
 export default function RoomModify() {
@@ -39,6 +45,9 @@ export default function RoomModify() {
     formState: { errors },
     reset,
   } = useForm<IRoomModify>();
+
+  console.log("data");
+  console.log(data);
 
   return (
     <Box
@@ -54,24 +63,27 @@ export default function RoomModify() {
       <Skeleton height={"43px"} width={"100%"} isLoaded={!isLoading}>
         <Skeleton isLoaded={!isLoading} height={"43px"}>
           <Heading>{data?.name}</Heading>
-          <Input
-            {...register("name", {
-              required: "Please write Name",
-            })}
-            defaultValue={data?.name}
-            variant={"filled"}
-            placeholder="Name"
-            w={"50%"}
-          />
-          <Input
-            {...register("name", {
-              required: "Please write Name",
-            })}
-            defaultValue={data?.name}
-            variant={"filled"}
-            placeholder="Name"
-            w={"50%"}
-          />
+          <VStack mt={10}>
+            <Input
+              {...register("name", {
+                required: "Please write RoomName",
+              })}
+              defaultValue={data?.name}
+              variant={"filled"}
+              placeholder="Room ame"
+              w={"25%"}
+            />
+            <Input
+              {...register("country", {
+                required: "Please write Name",
+              })}
+              defaultValue={data?.country}
+              variant={"filled"}
+              placeholder="Country"
+              w={"25%"}
+              mt={10}
+            />
+          </VStack>
         </Skeleton>
       </Skeleton>
       <Grid
