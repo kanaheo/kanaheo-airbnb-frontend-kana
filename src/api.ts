@@ -3,6 +3,7 @@ import axios from "axios";
 import { QueryFunctionContext } from "@tanstack/react-query";
 import Cookie from "js-cookie";
 import { formatDate } from "./lib/utils";
+import { IUpdateRoomVariables } from "./types";
 
 const instance = axios.create({
   baseURL:
@@ -149,6 +150,15 @@ export interface IUploadRoomVariables {
 export const uploadRoom = (variables: IUploadRoomVariables) =>
   instance
     .post(`rooms/`, variables, {
+      headers: {
+        "X-CSRFToken": Cookie.get("csrftoken") || "",
+      },
+    })
+    .then((response) => response.data);
+
+export const updateRoom = (variables: IUpdateRoomVariables) =>
+  instance
+    .put(`rooms/${variables.roomPk}/`, variables, {
       headers: {
         "X-CSRFToken": Cookie.get("csrftoken") || "",
       },
