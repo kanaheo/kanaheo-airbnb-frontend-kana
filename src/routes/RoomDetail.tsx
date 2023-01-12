@@ -59,7 +59,7 @@ export default function RoomDetail() {
           </VStack>
           {data?.is_owner ? (
             <Link to={`/roomModify/${roomPk}`}>
-              <Button>Edit</Button>
+              <Button className="aaa">Edit</Button>
             </Link>
           ) : null}
         </HStack>
@@ -176,6 +176,7 @@ export default function RoomDetail() {
             maxDate={new Date(Date.now() + 60 * 60 * 24 * 7 * 4 * 6 * 1000)} // 약6개월 계산 방법 ms로 계산하니 마지막에 1000을 한거
             locale="en"
             selectRange
+            className="calendar"
           />
           <Button
             disabled={!checkBookingData?.ok}
