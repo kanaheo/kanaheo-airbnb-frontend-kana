@@ -4,6 +4,7 @@ import router from "./router";
 import { RouterProvider } from "react-router-dom";
 import theme from "./theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "./styles/globals.scss";
 
 const client = new QueryClient(); // 여기서 캐싱을 엄청나게함 !
 

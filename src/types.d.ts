@@ -99,3 +99,11 @@ interface IForm {
   amenities: number[];
   category: ICategory;
 }
+
+interface IBookingDate {
+  pk: number;
+  user: string;
+  check_in: string;
+  check_out: string;
+  guests: number;
+}

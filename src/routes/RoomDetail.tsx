@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Link, useParams } from "react-router-dom";
-import { checkBooking, getRoom, getRoomReivews } from "../api";
-import { IReview, IRoomDetail } from "../types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  checkBooking,
+  getRoom,
+  getRoomReivews,
+  uploadRoomBooking,
+} from "../api";
+import { IBookingDate, IReview, IRoomDetail } from "../types";
 import {
   Avatar,
   Box,
@@ -16,15 +21,27 @@ import {
   VStack,
   Container,
   Button,
+  useToast,
+  Input,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
-import { FaStar } from "react-icons/fa";
+import { FaUsers, FaStar } from "react-icons/fa";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { Helmet } from "react-helmet";
+import { useForm } from "react-hook-form";
+import useUser from "../lib/useUser";
+import dayjs from "dayjs";
+import moment from "moment-timezone";
 
 export default function RoomDetail() {
   const { roomPk } = useParams();
+  const { userLoading, isLoggedIn, user } = useUser();
+  const queryClient = useQueryClient();
   const { isLoading, data } = useQuery<IRoomDetail>([`rooms`, roomPk], getRoom);
+  const toast = useToast();
+  const navigate = useNavigate();
   const { data: reviewsData, isLoading: isReviewsLoading } = useQuery<
     IReview[]
   >(["rooms", roomPk, "reviews"], getRoomReivews);
@@ -38,6 +55,42 @@ export default function RoomDetail() {
       enabled: dates !== undefined,
     }
   );
+  const { register, handleSubmit, reset } = useForm<IBookingDate>();
+
+  console.log("checkBookingData");
+  console.log(checkBookingData);
+
+  const onSubmit = (data: IBookingDate) => {
+    if (roomPk && dates && user) {
+      data["pk"] = parseInt(roomPk);
+      data["user"] = user.username;
+      data["check_in"] = moment(dates[0]).format("YYYY-MM-DD");
+      data["check_out"] = moment(dates[1]).format("YYYY-MM-DD");
+      muatation.mutate(data);
+    }
+  };
+
+  const muatation = useMutation(uploadRoomBooking, {
+    onSuccess: (data: IBookingDate) => {
+      toast({
+        status: "success",
+        title: "Booking Success!!",
+        position: "bottom-right",
+      });
+      queryClient.refetchQueries(["check"]);
+      reset();
+    },
+  });
+
+  useEffect(() => {
+    if (!isCheckingBooking && !checkBookingData?.ok) {
+      toast({
+        status: "error",
+        title: "Can't book on those dates, sorry.",
+        position: "bottom-right",
+      });
+    }
+  });
 
   return (
     <Box
@@ -166,7 +219,7 @@ export default function RoomDetail() {
             </Container>
           </Box>
         </Box>
-        <Box pt={10}>
+        <Box pt={10} as="form" onSubmit={handleSubmit(onSubmit)}>
           <Calendar
             onChange={setDates}
             prev2Label={null} // 년도 이동 X
@@ -176,8 +229,30 @@ export default function RoomDetail() {
             maxDate={new Date(Date.now() + 60 * 60 * 24 * 7 * 4 * 6 * 1000)} // 약6개월 계산 방법 ms로 계산하니 마지막에 1000을 한거
             locale="en"
             selectRange
+            className="calendar"
+            tileClassName="dates"
           />
+          <InputGroup my={5} w="350px">
+            <InputLeftElement
+              children={
+                <Box color="gray.500">
+                  <FaUsers />
+                </Box>
+              }
+            />
+            <Input
+              {...register("guests", {
+                required: "Please write guests",
+              })}
+              type="number"
+              variant={"filled"}
+              placeholder="Guests"
+              min={0}
+              max={20}
+            />
+          </InputGroup>
           <Button
+            type="submit"
             disabled={!checkBookingData?.ok}
             isLoading={isCheckingBooking && dates !== undefined}
             my={5}
@@ -186,9 +261,14 @@ export default function RoomDetail() {
           >
             Make booking
           </Button>
-          {!isCheckingBooking && !checkBookingData?.ok ? (
-            <Text color="red.500">Can't book on those dates, sorry.</Text>
-          ) : null}
+          {!checkBookingData?.ok &&
+            checkBookingData?.data.map((booking: IBookingDate) => (
+              <HStack key={booking.pk}>
+                <Text color="red.500">
+                  Already Booking : {booking.check_in} ~ {booking.check_out}
+                </Text>
+              </HStack>
+            ))}
         </Box>
       </Grid>
     </Box>

@@ -1,28 +1,24 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getAmenities, getCategories, getRoom, updateRoom } from "../api";
 import {
   IAmenity,
   ICategory,
-  IForm,
   IRoomDetail,
   IUpdateRoomVariables,
 } from "../types";
 import {
-  Avatar,
   Box,
   Grid,
   GridItem,
   Heading,
   HStack,
-  Image,
   Skeleton,
   Text,
   VStack,
   Button,
   Input,
   InputGroup,
-  InputLeftElement,
   InputLeftAddon,
   FormControl,
   FormLabel,
@@ -31,7 +27,6 @@ import {
   Checkbox,
   Select,
   Textarea,
-  Toast,
   useToast,
 } from "@chakra-ui/react";
 import "react-calendar/dist/Calendar.css";
